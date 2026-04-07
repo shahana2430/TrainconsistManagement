@@ -1,48 +1,58 @@
-import java.util.Arrays;
+import java.util.*;
 
 public class TrainConsistManagement {
+
+    // ✅ Search method with fail-fast validation
+    public static boolean searchBogie(List<String> bogies, String searchKey) {
+
+        // ❌ Fail-fast check
+        if (bogies.isEmpty()) {
+            throw new IllegalStateException("No bogies available in the train. Cannot perform search.");
+        }
+
+        // ✅ Search logic (Linear Search)
+        for (String id : bogies) {
+            if (id.equals(searchKey)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public static void main(String[] args) {
 
         System.out.println("=== Train Consist Management App ===");
 
-        // ✅ Sorted array of bogie IDs (IMPORTANT for Binary Search)
-        String[] bogieIds = {"BG101", "BG205", "BG309", "BG412", "BG550"};
+        List<String> bogies = new ArrayList<>();
 
-        // If unsorted, you must sort first:
-        // Arrays.sort(bogieIds);
+        // ❌ Case 1: Search on empty list
+        try {
+            searchBogie(bogies, "BG101");
+        } catch (IllegalStateException e) {
+            System.out.println("\nError: " + e.getMessage());
+        }
 
-        String searchKey = "BG309";
+        // ✅ Add bogies
+        bogies.add("BG101");
+        bogies.add("BG205");
+        bogies.add("BG309");
 
-        int left = 0;
-        int right = bogieIds.length - 1;
-        boolean found = false;
+        // ✅ Case 2: Valid search
+        try {
+            boolean found = searchBogie(bogies, "BG205");
 
-        // ✅ Binary Search
-        while (left <= right) {
-
-            int mid = (left + right) / 2;
-
-            int comparison = bogieIds[mid].compareTo(searchKey);
-
-            if (comparison == 0) {
-                found = true;
-                break;
-            } else if (comparison < 0) {
-                left = mid + 1;   // search right half
+            if (found) {
+                System.out.println("\nBogie FOUND after validation.");
             } else {
-                right = mid - 1;  // search left half
+                System.out.println("\nBogie NOT FOUND.");
             }
+
+        } catch (IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
         }
 
-        // ✅ Display result
-        if (found) {
-            System.out.println("\nBogie ID " + searchKey + " FOUND (Binary Search).");
-        } else {
-            System.out.println("\nBogie ID " + searchKey + " NOT FOUND.");
-        }
-
-        // Program continues...
+        // Program continues safely...
     }
 }
 
